@@ -1,8 +1,8 @@
 import customtkinter as ctk
 import os
 from tkinter import filedialog, messagebox
-from frontend.pages.base_page import BasePage
-from frontend.services.data_provider import DataProvider
+from pages.base_page import BasePage
+from services.data_provider import DataProvider
 
 class UploadPage(BasePage):
     """

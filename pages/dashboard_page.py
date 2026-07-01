@@ -1,9 +1,9 @@
 import customtkinter as ctk
 import os
-from frontend.pages.base_page import BasePage
-from frontend.widgets.metric_card import MetricCard
-from frontend.widgets.chart_widget import ChartWidget
-from frontend.services.data_provider import DataProvider
+from pages.base_page import BasePage
+from widgets.metric_card import MetricCard
+from widgets.chart_widget import ChartWidget
+from services.data_provider import DataProvider
 from typing import Dict, Any
 
 class DashboardPage(BasePage):

@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from frontend.services.data_service import DataService
+from services.data_service import DataService
 
 class BasePage(ctk.CTkFrame):
     """

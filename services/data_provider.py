@@ -2,7 +2,7 @@ import os
 import json
 import time
 from typing import Dict, List, Any
-from frontend.services.data_service import DataService
+from services.data_service import DataService
 
 class DataProvider(DataService):
     """

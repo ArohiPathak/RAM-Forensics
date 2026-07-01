@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from frontend.pages.base_page import BasePage
-from frontend.widgets.custom_table import CustomTable
-from frontend.services.data_provider import DataProvider
+from pages.base_page import BasePage
+from widgets.custom_table import CustomTable
+from services.data_provider import DataProvider
 from typing import Dict, Any
 
 class DllPage(BasePage):

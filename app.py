@@ -1,17 +1,17 @@
 import os
 import customtkinter as ctk
-from frontend.services.data_provider import DataProvider
-from frontend.widgets.sidebar import Sidebar
-from frontend.pages.dashboard_page import DashboardPage
-from frontend.pages.processes_page import ProcessesPage
-from frontend.pages.network_page import NetworkPage
-from frontend.pages.malware_page import MalwarePage
-from frontend.pages.upload_page import UploadPage
-from frontend.pages.dll_page import DllPage
-from frontend.pages.timeline_page import TimelinePage
-from frontend.pages.report_page import ReportPage
-from frontend.pages.settings_page import SettingsPage
-from frontend.pages.loading_page import LoadingPage
+from services.data_provider import DataProvider
+from widgets.sidebar import Sidebar
+from pages.dashboard_page import DashboardPage
+from pages.processes_page import ProcessesPage
+from pages.network_page import NetworkPage
+from pages.malware_page import MalwarePage
+from pages.upload_page import UploadPage
+from pages.dll_page import DllPage
+from pages.timeline_page import TimelinePage
+from pages.report_page import ReportPage
+from pages.settings_page import SettingsPage
+from pages.loading_page import LoadingPage
 
 # Set theme color defaults before loading
 ctk.set_appearance_mode("dark")

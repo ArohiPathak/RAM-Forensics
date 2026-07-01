@@ -9,7 +9,7 @@ class DataService:
     """
     DataService manages loading forensics data from backend output plain text files.
     If the files or output folder do not exist, it automatically populates the folder
-    with realistic mock text files to enable standalone frontend development.
+    with realistic mock text files to enable standalone UI development.
     """
     def __init__(self, output_dir: str = "output"):
         self.output_dir = output_dir
