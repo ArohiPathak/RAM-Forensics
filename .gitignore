@@ -1,1 +1,17 @@
+# Python virtual environment
+.venv/
+
+# Memory dumps
 sample_dump/
+sample dump/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

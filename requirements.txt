@@ -1,0 +1,2 @@
+pefile==2024.8.26
+volatility3==2.28.0
