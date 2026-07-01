@@ -4,6 +4,9 @@
 # Memory dumps
 sample_dump/
 sample dump/
+output/*.txt
+output/*.pdf
+output/*.json
 
 # Python cache
 __pycache__/
