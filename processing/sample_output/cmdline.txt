@@ -1,0 +1,107 @@
+Volatility 3 Framework 2.28.0
+
+PID	Process	Args
+
+4	System	-
+124	Registry	-
+376	smss.exe	\SystemRoot\System32\smss.exe
+496	csrss.exe	%SystemRoot%\system32\csrss.exe ObjectDirectory=\Windows SharedSection=1024,20480,768 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=sxssrv,4 ProfileControl=Off MaxRequestThreads=16
+568	wininit.exe	wininit.exe
+588	csrss.exe	%SystemRoot%\system32\csrss.exe ObjectDirectory=\Windows SharedSection=1024,20480,768 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=sxssrv,4 ProfileControl=Off MaxRequestThreads=16
+668	winlogon.exe	winlogon.exe
+712	services.exe	C:\Windows\system32\services.exe
+736	lsass.exe	C:\Windows\system32\lsass.exe
+856	svchost.exe	C:\Windows\system32\svchost.exe -k DcomLaunch -p
+884	fontdrvhost.ex	"fontdrvhost.exe"
+892	fontdrvhost.ex	"fontdrvhost.exe"
+988	svchost.exe	C:\Windows\system32\svchost.exe -k RPCSS -p
+484	LogonUI.exe	-
+564	dwm.exe	"dwm.exe"
+760	svchost.exe	C:\Windows\system32\svchost.exe -k netsvcs -p
+488	svchost.exe	C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p
+1120	svchost.exe	C:\Windows\system32\svchost.exe -k LocalServiceNoNetwork -p
+1180	svchost.exe	C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestricted -p
+1300	svchost.exe	C:\Windows\system32\svchost.exe -k LocalService -p
+1360	svchost.exe	C:\Windows\System32\svchost.exe -k netprofm -p
+1596	svchost.exe	C:\Windows\system32\svchost.exe -k NetworkService -p
+1604	MemCompression	-
+1744	svchost.exe	C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p
+1812	svchost.exe	C:\Windows\system32\svchost.exe -k LocalServiceNetworkRestricted -p
+1828	svchost.exe	C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p
+1928	svchost.exe	C:\Windows\system32\svchost.exe -k appmodel -p
+2004	spoolsv.exe	C:\Windows\System32\spoolsv.exe
+1156	svchost.exe	C:\Windows\system32\svchost.exe -k LocalServiceNoNetworkFirewall -p
+1752	svchost.exe	C:\Windows\System32\svchost.exe -k NetworkService -p
+2228	svchost.exe	C:\Windows\system32\svchost.exe -k NetworkService -p
+2240	svchost.exe	C:\Windows\System32\svchost.exe -k utcsvc -p
+2316	MsMpEng.exe	"C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.2205.7-0\MsMpEng.exe"
+2688	AggregatorHost	AggregatorHost.exe
+2740	svchost.exe	C:\Windows\system32\svchost.exe -k wsappx -p
+2924	sihost.exe	sihost.exe
+816	svchost.exe	C:\Windows\system32\svchost.exe -k UnistackSvcGroup
+732	taskhostw.exe	taskhostw.exe {222A245B-E637-4AE9-A93F-A59CA119A75E}
+3208	userinit.exe	-
+3244	explorer.exe	C:\Windows\Explorer.EXE
+3404	ctfmon.exe	"ctfmon.exe"
+3420	svchost.exe	C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted
+3708	svchost.exe	C:\Windows\system32\svchost.exe -k ClipboardSvcGroup -p
+3732	StartMenuExper	"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\StartMenuExperienceHost.exe" -ServerName:App.AppXywbrabmsek0gm3tkwpr5kwzbs55tkqay.mca
+3376	SearchHost.exe	"C:\Windows\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\SearchHost.exe" -ServerName:CortanaUI.AppXstmwaab17q5s3y22tp6apqz7a45vwv65.mca
+4172	RuntimeBroker.	C:\Windows\System32\RuntimeBroker.exe -Embedding
+4248	svchost.exe	C:\Windows\system32\svchost.exe -k UdkSvcGroup
+4256	RuntimeBroker.	C:\Windows\System32\RuntimeBroker.exe -Embedding
+4312	svchost.exe	C:\Windows\system32\svchost.exe -k osprivacy -p
+4556	dllhost.exe	C:\Windows\system32\DllHost.exe /Processid:{973D20D7-562D-44B9-B70B-5A0F49CCDF3F}
+5316	LockApp.exe	"C:\Windows\SystemApps\Microsoft.LockApp_cw5n1h2txyewy\LockApp.exe" -ServerName:WindowsDefaultLockScreen.AppX7y4nbzq37zn4ks9k7amqjywdat7d3j2z.mca
+5392	RuntimeBroker.	C:\Windows\System32\RuntimeBroker.exe -Embedding
+5532	SearchIndexer.	C:\Windows\system32\SearchIndexer.exe /Embedding
+5548	svchost.exe	C:\Windows\system32\svchost.exe -k LocalService -p
+5832	NisSrv.exe	"C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.2205.7-0\NisSrv.exe"
+6032	SecurityHealth	"C:\Windows\System32\SecurityHealthSystray.exe" 
+6056	SecurityHealth	C:\Windows\system32\SecurityHealthService.exe
+6104	msedge.exe	-
+4788	OneDrive.exe	"C:\Users\passb\AppData\Local\Microsoft\OneDrive\OneDrive.exe" /background
+1948	Microsoft.Shar	-
+6248	msteams.exe	"C:\Program Files\WindowsApps\MicrosoftTeams_22168.200.1405.7434_x64__8wekyb3d8bbwe\msteams.exe" ms-teams:system-initiated
+6356	RuntimeBroker.	C:\Windows\System32\RuntimeBroker.exe -Embedding
+6428	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --embedded-browser-webview=1 --webview-exe-name=msteams.exe --webview-exe-version=22168.200.1405.7434 --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared,msWebView2CodeCache --mojo-named-platform-channel-pipe=6248.6424.13719312169643691909
+6452	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=crashpad-handler --user-data-dir=C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView /prefetch:7 --monitor-self-annotation=ptype=crashpad-handler --database=C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView\Crashpad --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=103.0.5060.114 "--annotation=exe=C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --annotation=plat=Win64 "--annotation=prod=Edge WebView2" --annotation=ver=103.0.1264.62 --initial-client-data=0x108,0x10c,0x110,0xe4,0x118,0x7ffb2f59a0b8,0x7ffb2f59a0c8,0x7ffb2f59a0d8
+6684	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=gpu-process --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView" --webview-exe-name=msteams.exe --webview-exe-version=22168.200.1405.7434 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --gpu-preferences=UAAAAAAAAADgAAAYAAAAAAAAAAAAAAAAAABgAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAASAAAAAAAAAAYAAAAAgAAABAAAAAAAAAAGAAAAAAAAAAQAAAAAAAAAAAAAAAOAAAAEAAAAAAAAAABAAAADgAAAAgAAAAAAAAACAAAAAAAAAA= --mojo-platform-channel-handle=1876 --field-trial-handle=1900,i,10228619211906316781,6471977101385116072,131072 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared,msWebView2CodeCache /prefetch:2
+6700	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView" --webview-exe-name=msteams.exe --webview-exe-version=22168.200.1405.7434 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --mojo-platform-channel-handle=1992 --field-trial-handle=1900,i,10228619211906316781,6471977101385116072,131072 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared,msWebView2CodeCache /prefetch:3
+6720	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView" --webview-exe-name=msteams.exe --webview-exe-version=22168.200.1405.7434 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --mojo-platform-channel-handle=2388 --field-trial-handle=1900,i,10228619211906316781,6471977101385116072,131072 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared,msWebView2CodeCache /prefetch:8
+6832	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=renderer --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\EBWebView" --webview-exe-name=msteams.exe --webview-exe-version=22168.200.1405.7434 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --disable-client-side-phishing-detection --display-capture-permissions-policy-allowed --js-flags=--ms-user-locale= --js-flags="--harmony-weak-refs-with-cleanup-some --expose-gc" --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=24063495 --mojo-platform-channel-handle=3180 --field-trial-handle=1900,i,10228619211906316781,6471977101385116072,131072 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared,msWebView2CodeCache /prefetch:1
+7272	ShellExperienc	-
+7412	RuntimeBroker.	C:\Windows\System32\RuntimeBroker.exe -Embedding
+7796	ApplicationFra	C:\Windows\system32\ApplicationFrameHost.exe -Embedding
+5104	svchost.exe	C:\Windows\system32\svchost.exe -k LocalServiceAndNoImpersonation -p
+7904	FileCoAuth.exe	"C:\Users\passb\AppData\Local\Microsoft\OneDrive\22.131.0619.0001\FileCoAuth.exe" -Embedding
+1760	SgrmBroker.exe	C:\Windows\system32\SgrmBroker.exe
+2560	svchost.exe	C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p
+6524	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --no-startup-window /prefetch:5
+2260	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=crashpad-handler "--user-data-dir=C:\Users\passb\AppData\Local\Microsoft\Edge\User Data" /prefetch:7 --monitor-self-annotation=ptype=crashpad-handler "--database=C:\Users\passb\AppData\Local\Microsoft\Edge\User Data\Crashpad" --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=103.0.5060.114 "--annotation=exe=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --annotation=plat=Win64 "--annotation=prod=Microsoft Edge" --annotation=ver=103.0.1264.62 --initial-client-data=0x100,0x104,0x108,0xdc,0x19c,0x7ffb2f59a0b8,0x7ffb2f59a0c8,0x7ffb2f59a0d8
+7764	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=gpu-process --gpu-preferences=UAAAAAAAAADgAAAYAAAAAAAAAAAAAAAAAABgAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAASAAAAAAAAAAYAAAAAgAAABAAAAAAAAAAGAAAAAAAAAAQAAAAAAAAAAAAAAAOAAAAEAAAAAAAAAABAAAADgAAAAgAAAAAAAAACAAAAAAAAAA= --mojo-platform-channel-handle=2076 --field-trial-handle=2036,i,1821482466220351189,13151075718075801326,131072 /prefetch:2
+6664	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --mojo-platform-channel-handle=2136 --field-trial-handle=2036,i,1821482466220351189,13151075718075801326,131072 /prefetch:3
+8076	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --mojo-platform-channel-handle=2612 --field-trial-handle=2036,i,1821482466220351189,13151075718075801326,131072 /prefetch:8
+2708	dllhost.exe	C:\Windows\system32\DllHost.exe /Processid:{3AD05575-8857-4850-9277-11B85BDB8E09}
+5280	osf64.exe	"C:\Program Files\OSForensics\osf64.exe" 
+516	MoUsoCoreWorke	C:\Windows\uus\AMD64\MoUsoCoreWorker.exe
+6088	msiexec.exe	C:\Windows\system32\msiexec.exe /V
+3180	svchost.exe	C:\Windows\system32\svchost.exe -k defragsvc
+2792	WmiPrvSE.exe	C:\Windows\system32\wbem\wmiprvse.exe
+7548	Widgets.exe	"C:\Program Files\WindowsApps\MicrosoftWindows.Client.WebExperience_421.20070.545.0_x64__cw5n1h2txyewy\Dashboard\Widgets.exe" -ServerName:Microsoft.Windows.DashboardServer
+6216	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --embedded-browser-webview=1 --webview-exe-name=Widgets.exe --webview-exe-version=421.20070.375.0 --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disk-cache-size=52428800 --edge-webview-is-background --enable-features=msWebView2TreatAppSuspendAsDeviceSuspend --lang=en-US --mojo-named-platform-channel-pipe=7548.6132.2548106006903448495
+1500	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=crashpad-handler --user-data-dir=C:\Users\passb\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView /prefetch:7 --monitor-self-annotation=ptype=crashpad-handler --database=C:\Users\passb\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Crashpad --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=103.0.5060.114 "--annotation=exe=C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --annotation=plat=Win64 "--annotation=prod=Edge WebView2" --annotation=ver=103.0.1264.62 --initial-client-data=0x104,0x108,0x10c,0xe0,0x114,0x7ffb2f59a0b8,0x7ffb2f59a0c8,0x7ffb2f59a0d8
+1468	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=gpu-process --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView" --webview-exe-name=Widgets.exe --webview-exe-version=421.20070.375.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --gpu-preferences=UAAAAAAAAADgAAAYAAAAAAAAAAAAAAAAAABgAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAASAAAAAAAAAAYAAAAAgAAABAAAAAAAAAAGAAAAAAAAAAQAAAAAAAAAAAAAAAOAAAAEAAAAAAAAAABAAAADgAAAAgAAAAAAAAACAAAAAAAAAA= --mojo-platform-channel-handle=1964 --field-trial-handle=1956,i,12059258851688907467,14812799489481897731,131072 --enable-features=msWebView2TreatAppSuspendAsDeviceSuspend /prefetch:2
+7124	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView" --webview-exe-name=Widgets.exe --webview-exe-version=421.20070.375.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --mojo-platform-channel-handle=2024 --field-trial-handle=1956,i,12059258851688907467,14812799489481897731,131072 --enable-features=msWebView2TreatAppSuspendAsDeviceSuspend /prefetch:3
+7160	msedgewebview2	"C:\Program Files (x86)\Microsoft\EdgeWebView\Application\103.0.1264.62\msedgewebview2.exe" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --noerrdialogs --user-data-dir="C:\Users\passb\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView" --webview-exe-name=Widgets.exe --webview-exe-version=421.20070.375.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --mojo-platform-channel-handle=2380 --field-trial-handle=1956,i,12059258851688907467,14812799489481897731,131072 --enable-features=msWebView2TreatAppSuspendAsDeviceSuspend /prefetch:8
+6788	msedgewebview2	-
+2180	Calculator.exe	"C:\Program Files\WindowsApps\Microsoft.WindowsCalculator_10.2012.21.0_x64__8wekyb3d8bbwe\Calculator.exe" -ServerName:App.AppXsm3pg4n7er43kdh1qp4e79f1j7am68r8.mca
+1292	RuntimeBroker.	C:\Windows\System32\RuntimeBroker.exe -Embedding
+3456	smartscreen.ex	C:\Windows\System32\smartscreen.exe -Embedding
+1736	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=renderer --disable-client-side-phishing-detection --instant-process --display-capture-permissions-policy-allowed --js-flags=--ms-user-locale= --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=9 --launch-time-ticks=950156344 --mojo-platform-channel-handle=3276 --field-trial-handle=2036,i,1821482466220351189,13151075718075801326,131072 /prefetch:1
+7788	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=renderer --disable-client-side-phishing-detection --display-capture-permissions-policy-allowed --js-flags=--ms-user-locale= --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=10 --launch-time-ticks=950183923 --mojo-platform-channel-handle=4728 --field-trial-handle=2036,i,1821482466220351189,13151075718075801326,131072 /prefetch:1
+2720	msedge.exe	"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --type=utility --utility-sub-type=asset_store.mojom.AssetStoreService --lang=en-US --service-sandbox-type=entity_extraction --mojo-platform-channel-handle=5144 --field-trial-handle=2036,i,1821482466220351189,13151075718075801326,131072 /prefetch:8
+5840	SystemSettings	"C:\Windows\ImmersiveControlPanel\SystemSettings.exe" -ServerName:microsoft.windows.immersivecontrolpanel
+2500	UserOOBEBroker	C:\Windows\System32\oobe\UserOOBEBroker.exe -Embedding
+464	SearchProtocol	"C:\Windows\System32\SearchProtocolHost.exe" Global\UsGthrFltPipeMssGthrPipe3_ Global\UsGthrCtrlFltPipeMssGthrPipe3 1 -2147483646 "Software\Microsoft\Windows Search" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT; MS Search 4.0 Robot)" "C:\ProgramData\Microsoft\Search\Data\Temp\usgthrsvc" "DownLevelDaemon" 
+128017663995251	Milliseconds,MS	-
