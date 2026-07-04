@@ -1,9 +1,18 @@
 import customtkinter as ctk
 import os
+import time
 from tkinter import messagebox
 from pages.base_page import BasePage
 from services.data_provider import DataProvider
 from typing import Dict, Any
+
+# Use the shared, fully-formatted report builder instead of hand-writing PDF
+# bytes here. This is the same module/tests we already built and verified
+# (reports/pdf_generator.py) - it gives us proper tables, page breaks, text
+# wrapping, and the black-and-white DFIR layout, instead of a single page of
+# unwrapped raw text.
+from reports.pdf_generator import generate_forensic_pdf
+
 
 class ReportPage(BasePage):
     """
@@ -14,7 +23,8 @@ class ReportPage(BasePage):
       - Target memory file path, OS profile, risk score.
       - Bullet points listing forensic findings and actionable recommendations.
     - Right side: Config inputs (Case ID, Investigator name).
-    - Generate PDF Action: displays a successful validation popup.
+    - Generate PDF Action: builds the real PDF via reports/pdf_generator.py
+      and displays a success/error popup.
     """
     def __init__(self, master, data_service: DataProvider, **kwargs):
         super().__init__(
@@ -257,7 +267,6 @@ class ReportPage(BasePage):
 
     def refresh(self):
         """Loads report variables from DataProvider and updates preview document."""
-        import time
         summary = self.data_service.get_summary()
         findings = self.data_service.get_findings()
         recs = self.data_service.get_recommendations()
@@ -327,9 +336,30 @@ class ReportPage(BasePage):
         self.meta_labels["case_id"].configure(text=self.case_input.get().strip())
         self.meta_labels["analyst"].configure(text=self.analyst_input.get().strip())
 
+    def _append_log_lines(self, lines):
+        """
+        Small helper: append one or more lines to the on-screen runtime
+        logger textbox. Pulled out of _generate_pdf_report so that function
+        can focus on building the report instead of repeating textbox
+        enable/insert/disable calls.
+        """
+        self.log_txt.configure(state="normal")
+        for line in lines:
+            self.log_txt.insert("end", line + "\n")
+        self.log_txt.configure(state="disabled")
+
     def _generate_pdf_report(self):
-        """Generates a valid standard PDF document and writes it to the output/ folder."""
-        import time
+        """
+        Generates the forensic PDF report and writes it to the output/ folder.
+
+        This now delegates the actual PDF building to
+        reports.pdf_generator.generate_forensic_pdf(), the same
+        well-tested, nicely formatted (tables, page breaks, wrapped text)
+        report builder used elsewhere in the app - instead of writing raw
+        PDF bytes by hand here. That means this page only has to gather
+        the report data and handle the UI side (logging + success/error
+        popups); the PDF layout logic lives in exactly one place.
+        """
         case_id = self.case_input.get().strip()
         analyst = self.analyst_input.get().strip()
         if not case_id:
@@ -339,6 +369,14 @@ class ReportPage(BasePage):
         summary = self.data_service.get_summary()
         findings = self.data_service.get_findings()
         recs = self.data_service.get_recommendations()
+
+        # detection_details is optional - only some DataProvider
+        # implementations expose a per-category breakdown (e.g. how many
+        # hidden processes, unknown DLLs, etc. were found). If it's not
+        # available we simply skip that part of the report.
+        detection_details = None
+        if hasattr(self.data_service, "get_detection_details"):
+            detection_details = self.data_service.get_detection_details()
         
         # Absolute path to the PDF inside output_dir
         pdf_filename = f"RAM_Report_Case_{case_id}.pdf"
@@ -348,16 +386,18 @@ class ReportPage(BasePage):
         if hasattr(self.data_service, "add_log"):
             self.data_service.add_log(f"Compiling forensic report {pdf_filename}...")
         
-        # Refresh logs display
+        # Refresh logs display, then show a few progress lines while we build the PDF
         self.log_txt.configure(state="normal")
         self.log_txt.delete("1.0", "end")
         if hasattr(self.data_service, "get_logs"):
             for logLine in self.data_service.get_logs():
                 self.log_txt.insert("end", logLine + "\n")
-        self.log_txt.insert("end", "[~] Packaging forensic audit segments...\n")
-        self.log_txt.insert("end", f"[*] Target output path: {pdf_path}\n")
-        self.log_txt.insert("end", "[+] Compiling findings timeline and DLL checksums...\n")
         self.log_txt.configure(state="disabled")
+        self._append_log_lines([
+            "[~] Packaging forensic audit segments...",
+            f"[*] Target output path: {pdf_path}",
+            "[+] Compiling findings timeline and DLL checksums...",
+        ])
         
         metadata = {
             "Case ID": case_id,
@@ -365,89 +405,24 @@ class ReportPage(BasePage):
             "Target File": summary.get("dump_file", "mem_dump.raw"),
             "Profile": summary.get("profile", "Unknown"),
             "Risk Score": f"{summary.get('risk_score', 0)}/100",
-            "Report Date": time.strftime("%Y-%m-%d %H:%M:%S")
+            "Report Date": time.strftime("%Y-%m-%d %H:%M:%S"),
         }
         
-        # Generate the PDF file
+        # Generate the PDF file using the shared report builder.
         try:
-            # Create folder if missing
-            os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
-            
-            # Simple PDF construction
-            stream_content = []
-            stream_content.append("BT")
-            stream_content.append("/F1 16 Tf")
-            stream_content.append("70 750 Td")
-            stream_content.append("(VOLATILITY 3 MEMORY FORENSICS REPORT) Tj")
-            stream_content.append("0 -30 Td")
-            
-            stream_content.append("/F1 10 Tf")
-            for key, val in metadata.items():
-                safe_val = str(val).replace("(", "\\(").replace(")", "\\)")
-                stream_content.append(f"({key}: {safe_val}) Tj")
-                stream_content.append("0 -15 Td")
-                
-            stream_content.append("0 -15 Td")
-            stream_content.append("/F1 12 Tf")
-            stream_content.append("(FORENSIC FINDINGS:) Tj")
-            stream_content.append("0 -20 Td")
-            stream_content.append("/F1 9 Tf")
-            for f in findings:
-                safe_f = f.replace("(", "\\(").replace(")", "\\)")
-                stream_content.append(f"(- {safe_f}) Tj")
-                stream_content.append("0 -13 Td")
-                
-            stream_content.append("0 -15 Td")
-            stream_content.append("/F1 12 Tf")
-            stream_content.append("(MITIGATION RECOMMENDATIONS:) Tj")
-            stream_content.append("0 -20 Td")
-            stream_content.append("/F1 9 Tf")
-            for r in recs:
-                safe_r = r.replace("(", "\\(").replace(")", "\\)")
-                stream_content.append(f"(- {safe_r}) Tj")
-                stream_content.append("0 -13 Td")
-                
-            stream_content.append("ET")
-            
-            stream_str = "\n".join(stream_content)
-            stream_bytes = stream_str.encode('latin1')
-            
-            objects = []
-            objects.append(b"<< /Type /Catalog /Pages 2 0 R >>")
-            objects.append(b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>")
-            objects.append(b"<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 595.27 841.89] /Contents 5 0 R >>")
-            objects.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
-            objects.append(f"<< /Length {len(stream_bytes)} >>\nstream\n".encode('latin1') + stream_bytes + b"\nendstream")
-            
-            with open(pdf_path, "wb") as f:
-                f.write(b"%PDF-1.4\n")
-                offsets = []
-                for idx, obj in enumerate(objects):
-                    offsets.append(f.tell())
-                    f.write(f"{idx+1} 0 obj\n".encode('latin1'))
-                    f.write(obj)
-                    f.write(b"\nendobj\n")
-                    
-                xref_offset = f.tell()
-                f.write(b"xref\n")
-                f.write(f"0 {len(objects)+1}\n".encode('latin1'))
-                f.write(b"0000000000 65535 f \n")
-                for offset in offsets:
-                    f.write(f"{offset:010d} 00000 n \n".encode('latin1'))
-                    
-                f.write(b"trailer\n")
-                f.write(f"<< /Size {len(objects)+1} /Root 1 0 R >>\n".encode('latin1'))
-                f.write(b"startxref\n")
-                f.write(f"{xref_offset}\n".encode('latin1'))
-                f.write(b"%%EOF\n")
-                
+            generate_forensic_pdf(
+                pdf_path,
+                metadata,
+                findings,
+                recs,
+                detection_details=detection_details,
+            )
+
             if hasattr(self.data_service, "add_log"):
                 self.data_service.add_log(f"Successfully generated PDF: {pdf_filename}")
             
             # Log success to console
-            self.log_txt.configure(state="normal")
-            self.log_txt.insert("end", "[✔] Compiled successfully. File locked on disk.\n")
-            self.log_txt.configure(state="disabled")
+            self._append_log_lines(["[✔] Compiled successfully. File locked on disk."])
             
             # Show success popup
             messagebox.showinfo(
@@ -458,4 +433,5 @@ class ReportPage(BasePage):
         except Exception as e:
             if hasattr(self.data_service, "add_log"):
                 self.data_service.add_log(f"Error compiling PDF: {e}")
+            self._append_log_lines([f"[!] Error compiling PDF: {e}"])
             messagebox.showerror("Export Error", f"Failed to save PDF report file:\n{e}")
