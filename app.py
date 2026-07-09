@@ -77,8 +77,8 @@ class App(ctk.CTk):
         for page_name, page_frame in self.pages.items():
             page_frame.grid(row=0, column=0, sticky="nsew")
             
-        # Display default landing dashboard
-        self.show_page("dashboard")
+        # Display the upload page by default for the demo workflow
+        self.show_page("upload")
 
     def show_page(self, page_name: str):
         """Displays the selected page and hides all other active frames."""

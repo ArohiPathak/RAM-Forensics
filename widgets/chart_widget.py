@@ -53,6 +53,44 @@ class ChartWidget(ctk.CTkFrame):
         self.canvas = FigureCanvasTkAgg(self.fig, self)
         self.canvas.get_tk_widget().grid(row=1, column=0, padx=12, pady=(0, 12), sticky="nsew")
 
+    def _prepare_bar_chart_data(self, chart_data: dict):
+        """Filter invalid process data and return labels/values suitable for the bar chart."""
+        labels = chart_data.get("processes", []) or []
+        values = chart_data.get("threads", []) or []
+
+        prepared_entries = []
+        for label, value in zip(labels, values):
+            if not isinstance(label, str):
+                continue
+
+            normalized_label = label.strip()
+            normalized_label = normalized_label.replace("\t", " ").replace("\n", " ")
+            normalized_label = " ".join(normalized_label.split())
+            if not normalized_label:
+                continue
+
+            lower_label = normalized_label.lower()
+            if lower_label in {"unknown", "unknown process", "n/a", "na", "none", ""}:
+                continue
+
+            try:
+                numeric_value = int(value)
+            except (TypeError, ValueError):
+                continue
+
+            if numeric_value < 0:
+                continue
+
+            prepared_entries.append((normalized_label, numeric_value))
+
+        prepared_entries.sort(key=lambda item: item[1], reverse=True)
+        prepared_entries = prepared_entries[:5]
+
+        prepared_labels = [entry[0] for entry in prepared_entries]
+        prepared_values = [entry[1] for entry in prepared_entries]
+
+        return {"labels": prepared_labels, "values": prepared_values}
+
     def update_chart(self, chart_data: dict):
         """Redraws the chart with updated dataset parameters and applies dynamic theme styling."""
         self.ax.clear()
@@ -76,10 +114,48 @@ class ChartWidget(ctk.CTkFrame):
             
         self.fig.set_facecolor(bg_color)
         self.ax.set_facecolor(bg_color)
+        self.ax.set_axis_off()
+
+        labels = chart_data.get("labels", []) if self.chart_type == "donut" else chart_data.get("processes", [])
+        sizes = chart_data.get("sizes", []) if self.chart_type == "donut" else chart_data.get("threads", [])
+
+        if self.chart_type == "bar":
+            prepared_data = self._prepare_bar_chart_data(chart_data)
+            labels = prepared_data["labels"]
+            sizes = prepared_data["values"]
+
+            if len(labels) < 2 or len(sizes) < 2:
+                self.ax.text(
+                    0.5,
+                    0.5,
+                    "Insufficient process data",
+                    ha='center',
+                    va='center',
+                    color=text_color,
+                    fontsize=8,
+                    family='Segoe UI',
+                    wrap=True
+                )
+                self.fig.canvas.draw()
+                return
+
+        if not labels or not sizes or (isinstance(sizes, (list, tuple)) and not sizes) or (isinstance(sizes, (list, tuple)) and all(int(size) == 0 for size in sizes)):
+            self.ax.text(
+                0.5,
+                0.5,
+                "No analysis loaded\nUpload a .mem file to begin.",
+                ha='center',
+                va='center',
+                color=text_color,
+                fontsize=8,
+                family='Segoe UI',
+                wrap=True
+            )
+            self.fig.canvas.draw()
+            return
         
+        self.ax.set_axis_on()
         if self.chart_type == "donut":
-            labels = chart_data.get("labels", [])
-            sizes = chart_data.get("sizes", [])
             colors = chart_data.get("colors", ["#1D4ED8", "#00E5FF", "#FF3B30", "#1E293B"])
             
             # Configure subplot spacing specifically for pie to prevent text cutting
@@ -106,8 +182,8 @@ class ChartWidget(ctk.CTkFrame):
             self.ax.axis('equal')
             
         elif self.chart_type == "bar":
-            categories = chart_data.get("processes", [])
-            values = chart_data.get("threads", [])
+            categories = labels
+            values = sizes
             colors = chart_data.get("colors", ["#00E5FF"])
             
             self.fig.subplots_adjust(top=0.90, bottom=0.25, left=0.20, right=0.90)
@@ -129,6 +205,10 @@ class ChartWidget(ctk.CTkFrame):
             
             self.ax.tick_params(colors=text_color, labelsize=7.5)
             self.ax.yaxis.grid(True, linestyle='--', alpha=0.1, color=grid_color)
+
+            if values:
+                max_value = max(values)
+                self.ax.set_ylim(0, max(1, max_value * 1.1))
             
             # Rotate labels to prevent overlap
             self.ax.set_xticks(range(len(categories)))

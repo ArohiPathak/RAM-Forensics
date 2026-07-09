@@ -1,5 +1,7 @@
 import customtkinter as ctk
 import os
+import threading
+from queue import Queue, Empty
 from pages.base_page import BasePage
 from widgets.metric_card import MetricCard
 from widgets.chart_widget import ChartWidget
@@ -26,6 +28,10 @@ class DashboardPage(BasePage):
         )
         
         self.cards = {}
+        self._refresh_thread = None
+        self._refresh_in_progress = False
+        self._refresh_queue = Queue()
+        self._refresh_timer_id = None
         
         # Configure layout (Main content frame: 1 Column, Row 1 stretches)
         self.content_frame.grid_columnconfigure(0, weight=1)
@@ -179,106 +185,180 @@ class DashboardPage(BasePage):
         self.refresh()
 
     def refresh(self):
-        """Pulls dynamic metrics and charts parameters from DataProvider without hardcoding."""
-        dashboard_data = self.data_service.get_dashboard_data()
-        summary = dashboard_data.get("summary", {})
-        donut_data = dashboard_data.get("donut_chart", {})
-        bar_data = dashboard_data.get("bar_chart", {})
-        timeline_events = self.data_service.get_timeline()
-        
-        # 1. Clean up old top summary metric cards
+        """Refreshes dashboard data without blocking the Tk main thread."""
+        if self._refresh_in_progress:
+            return
+
+        self._refresh_in_progress = True
+        self._render_placeholder_state()
+
+        if self._refresh_timer_id is None:
+            self._refresh_timer_id = self.after(100, self._process_refresh_queue)
+
+        self._refresh_thread = threading.Thread(target=self._load_dashboard_data, daemon=True)
+        self._refresh_thread.start()
+
+    def _render_placeholder_state(self):
+        """Shows the empty-state dashboard while the latest analysis data is being loaded."""
         for card in self.cards.values():
             card.destroy()
         self.cards.clear()
-        
-        # Extract metadata metrics
-        dump_path = summary.get("dump_file", "mem_dump.raw")
+
+        self.pie_chart.update_chart({"labels": [], "sizes": [], "colors": []})
+        self.bar_chart.update_chart({"processes": [], "threads": [], "colors": []})
+        self.gauge_bar.set(0.0)
+        self.gauge_status.configure(text="LOADING DASHBOARD")
+        self.summary_text.configure(state="normal")
+        self.summary_text.delete("1.0", "end")
+        self.summary_text.insert("1.0", "Loading dashboard metrics from the current analysis output...")
+        self.summary_text.configure(state="disabled")
+
+        for widget in self.activity_scroll.winfo_children():
+            widget.destroy()
+
+        placeholder = ctk.CTkLabel(
+            self.activity_scroll,
+            text="Loading dashboard data...",
+            font=ctk.CTkFont(family="Segoe UI", size=12),
+            text_color="#627284"
+        )
+        placeholder.pack(pady=30)
+
+    def _load_dashboard_data(self):
+        """Parses the latest output files in a background thread and hands the result to the Tk main loop."""
+        try:
+            dashboard_data = self.data_service.get_dashboard_data()
+            timeline_events = self.data_service.get_timeline()
+        except Exception:
+            dashboard_data = {"summary": {}, "donut_chart": {}, "bar_chart": {}}
+            timeline_events = []
+
+        self._refresh_queue.put((dashboard_data, timeline_events))
+
+    def _process_refresh_queue(self):
+        """Consumes queued dashboard results from the Tk main thread."""
+        while True:
+            try:
+                dashboard_data, timeline_events = self._refresh_queue.get_nowait()
+            except Empty:
+                break
+            self._apply_dashboard_data(dashboard_data, timeline_events)
+
+        if self._refresh_in_progress:
+            self._refresh_timer_id = self.after(100, self._process_refresh_queue)
+        else:
+            self._refresh_timer_id = None
+
+    def _apply_dashboard_data(self, dashboard_data: Dict[str, Any], timeline_events):
+        """Applies the parsed dashboard data back onto the Tk widgets from the main thread."""
+        self._refresh_in_progress = False
+        summary = dashboard_data.get("summary", {})
+        has_data = bool(summary)
+        donut_data = dashboard_data.get("donut_chart", {})
+        bar_data = dashboard_data.get("bar_chart", {})
+
+        for card in self.cards.values():
+            card.destroy()
+        self.cards.clear()
+
+        if not has_data:
+            self.pie_chart.update_chart({"labels": [], "sizes": [], "colors": []})
+            self.bar_chart.update_chart({"processes": [], "threads": [], "colors": []})
+            self.gauge_bar.set(0.0)
+            self.gauge_status.configure(text="NO ANALYSIS AVAILABLE")
+            self.summary_text.configure(state="normal")
+            self.summary_text.delete("1.0", "end")
+            self.summary_text.insert("1.0", "No analysis available. Select a .mem file and click Analyze.")
+            self.summary_text.configure(state="disabled")
+
+            for widget in self.activity_scroll.winfo_children():
+                widget.destroy()
+
+            placeholder = ctk.CTkLabel(
+                self.activity_scroll,
+                text="No analysis available yet.",
+                font=ctk.CTkFont(family="Segoe UI", size=12),
+                text_color="#627284"
+            )
+            placeholder.pack(pady=30)
+            return
+
+        dump_path = summary.get("dump_file", "")
         filename = os.path.basename(dump_path)
         os_profile = summary.get("profile", "Unknown Profile")
         total_p = summary.get("total_processes", 0)
         net_conn = summary.get("network_connections", 0)
         hidden_p = summary.get("hidden_processes", 0)
         risk_score = summary.get("risk_score", 0)
-        
-        # Re-populate 6 DFIR Summary Cards
-        # Card 1: Memory Dump filename
+
         self.cards["dump"] = MetricCard(
             self.stats_frame,
             title="Forensic Target",
-            value=filename,
-            subtitle=os.path.dirname(dump_path) if len(dump_path) > 30 else dump_path,
+            value=filename or "—",
+            subtitle=os.path.dirname(dump_path) if dump_path and len(dump_path) > 30 else (dump_path or "—"),
             theme="info"
         )
         self.cards["dump"].grid(row=0, column=0, padx=3, sticky="nsew")
-        
-        # Card 2: Operating System
+
         self.cards["os"] = MetricCard(
             self.stats_frame,
             title="OS Profile",
-            value=os_profile.split(" ")[0],
-            subtitle=" ".join(os_profile.split(" ")[1:]),
+            value=os_profile.split(" ")[0] if os_profile else "—",
+            subtitle=" ".join(os_profile.split(" ")[1:]) if os_profile else "—",
             theme="info"
         )
         self.cards["os"].grid(row=0, column=1, padx=3, sticky="nsew")
-        
-        # Card 3: Total Processes
+
         self.cards["proc"] = MetricCard(
             self.stats_frame,
             title="Processes count",
-            value=str(total_p),
+            value=str(total_p) if total_p else "—",
             subtitle="Parsed volatility pslist",
             theme="info"
         )
         self.cards["proc"].grid(row=0, column=2, padx=3, sticky="nsew")
-        
-        # Card 4: Network Connections
+
         self.cards["net"] = MetricCard(
             self.stats_frame,
             title="Network sockets",
-            value=str(net_conn),
+            value=str(net_conn) if net_conn else "—",
             subtitle="Active sockets netscan",
             theme="info"
         )
         self.cards["net"].grid(row=0, column=3, padx=3, sticky="nsew")
-        
-        # Card 5: Hidden Processes
+
         self.cards["hidden"] = MetricCard(
             self.stats_frame,
             title="Hidden Procs",
-            value=str(hidden_p),
+            value=str(hidden_p) if hidden_p else "—",
             subtitle="Anomalous threads tagged",
             theme="warning" if hidden_p > 0 else "success"
         )
         self.cards["hidden"].grid(row=0, column=4, padx=3, sticky="nsew")
-        
-        # Card 6: Risk Rating Score
+
         self.cards["risk"] = MetricCard(
             self.stats_frame,
             title="Threat Risk Score",
-            value=f"{risk_score} / 100",
+            value=f"{risk_score} / 100" if risk_score else "—",
             subtitle="Critical severity alerts",
             theme="danger" if risk_score > 60 else "warning" if risk_score > 30 else "success"
         )
         self.cards["risk"].grid(row=0, column=5, padx=3, sticky="nsew")
-        
-        # 2. Update Risk Gauge Progress Bar
+
         self.gauge_bar.set(risk_score / 100.0)
         self.gauge_status.configure(text=f"CRITICAL RISK THREAT RATING: {risk_score}%")
-        
-        # 3. Re-render Matplotlib Chart Placeholders with data provider variables
+
         self.pie_chart.update_chart(donut_data)
         self.bar_chart.update_chart(bar_data)
-        
-        # 4. Update Narrative Investigation Summary
+
         self.summary_text.configure(state="normal")
         self.summary_text.delete("1.0", "end")
         self.summary_text.insert("1.0", summary.get("investigation_summary", "No analyst notes written for this snapshot."))
         self.summary_text.configure(state="disabled")
-        
-        # 5. Re-populate Recent Activity logs
+
         for widget in self.activity_scroll.winfo_children():
             widget.destroy()
-            
+
         if not timeline_events:
             no_lbl = ctk.CTkLabel(
                 self.activity_scroll,
@@ -291,7 +371,7 @@ class DashboardPage(BasePage):
             for event in timeline_events:
                 sev = event.get("severity", "info")
                 dot_color = "#FF3B30" if sev == "danger" else "#FFB300" if sev == "warning" else "#00FF88"
-                
+
                 if sev == "danger":
                     bg_item = ("#FFF5F5", "#1B171F")
                     border_col = ("#E53E3E", "#471D1D")
@@ -300,16 +380,14 @@ class DashboardPage(BasePage):
                     bg_item = ("#FFFFFF", "#121C2C")
                     border_col = ("#D0D5DD", "#1E2D4A")
                     txt_col = ("#334155", "#E2E8F0")
-                    
+
                 log_box = ctk.CTkFrame(self.activity_scroll, fg_color=bg_item, border_color=border_col, border_width=1, corner_radius=6)
                 log_box.pack(pady=3, fill="x")
                 log_box.grid_columnconfigure(1, weight=1)
-                
-                # Severity Dot
+
                 lbl_dot = ctk.CTkLabel(log_box, text="●", text_color=dot_color, font=ctk.CTkFont(size=14))
                 lbl_dot.grid(row=0, column=0, padx=(10, 4), pady=6)
-                
-                # Category & Details
+
                 lbl_desc = ctk.CTkLabel(
                     log_box,
                     text=f"{event.get('time')} - [{event.get('category').upper()}] {event.get('details')}",

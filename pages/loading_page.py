@@ -1,6 +1,8 @@
 import customtkinter as ctk
+import os
 import time
 import threading
+from backend import volatility
 from pages.base_page import BasePage
 from services.data_provider import DataProvider
 
@@ -102,11 +104,12 @@ class LoadingPage(BasePage):
         self.console.see("end")
 
     def start_analysis(self, file_path: str):
-        """Starts simulated backend plugin execution."""
+        """Starts backend analysis and shows the loading view until output files are written."""
         if self._is_running:
             return
             
         self._is_running = True
+        self.data_service.mark_analysis_ready(False)
         self.prog_bar.set(0.0)
         
         # Clear logs and print header
@@ -120,8 +123,7 @@ class LoadingPage(BasePage):
         # Start spinner animation
         self._animate_spinner(0)
         
-        # Launch simulation thread
-        threading.Thread(target=self._run_simulation, daemon=True).start()
+        threading.Thread(target=self._run_analysis, args=(file_path,), daemon=True).start()
 
     def _animate_spinner(self, index: int):
         """Recursively draws the braille spinner glyph inside progress label."""
@@ -135,54 +137,53 @@ class LoadingPage(BasePage):
         # Schedule next frame in 100ms
         self.after(100, lambda: self._animate_spinner((index + 1) % len(self.spinner_chars)))
 
-    def _run_simulation(self):
-        """Simulates sequentially running the 6 Volatility plugins."""
-        plugins = [
-            ("windows.info", 0.16),
-            ("windows.pslist", 0.33),
-            ("windows.pstree", 0.50),
-            ("windows.netscan", 0.66),
-            ("windows.cmdline", 0.83),
-            ("windows.dlllist", 1.0)
-        ]
-        
-        for plugin_name, target_pct in plugins:
-            # 1. Print starting indicator
+    def _run_analysis(self, file_path: str):
+        """Runs the backend Volatility analysis flow and waits for output files to be written."""
+        output_dir = self.data_service.output_dir
+
+        for idx, (plugin_name, output_file) in enumerate(volatility.PLUGIN_SEQUENCE, start=1):
+            target_pct = idx / len(volatility.PLUGIN_SEQUENCE)
             self.after(0, lambda name=plugin_name: self._console_log(f"⏳ Running {name}..."))
-            
-            # Simulate processing delay
-            time.sleep(0.8)
-            
-            # Update progress bar smoothly
+            success = volatility.run_plugin(plugin_name, output_file, file_path, output_dir=output_dir)
             self.after(0, lambda p=target_pct: self.prog_bar.set(p))
-            
-            # 2. Overwrite line with completed checkmark
-            self.after(0, lambda name=plugin_name: self._console_log(f"✔ Running {name}", replace_last=True))
-            
-            # Small resting pause between plugin stages
-            time.sleep(0.3)
-            
-        # Complete stage
+            if success:
+                self.after(0, lambda name=plugin_name: self._console_log(f"✔ Running {name}", replace_last=True))
+            else:
+                self.after(0, lambda: self._console_log("[-] One or more plugins failed to produce output."))
+
         self.after(0, lambda: self._console_log("\n[+] All plugins executed successfully. Reports cached."))
-        time.sleep(0.8)
-        
-        # Trigger completed actions
+        time.sleep(0.3)
         self.after(0, self._on_finish_analysis)
 
     def _on_finish_analysis(self):
         """Navigates back to the main dashboard panel on finish."""
         self._is_running = False
+        self.data_service.mark_analysis_ready(False)
+        if os.path.exists(self.data_service.get_output_path("system_info.txt")):
+            self.data_service.mark_analysis_ready(True)
+
+        try:
+            self.grid_remove()
+        except Exception:
+            pass
+
+        try:
+            self.grab_release()
+        except Exception:
+            pass
+
+        try:
+            self.master.winfo_toplevel().attributes("-topmost", False)
+        except Exception:
+            pass
         
         app = self.winfo_toplevel()
         if hasattr(app, "show_page"):
             summary = self.data_service.get_summary()
             if hasattr(app, "sidebar"):
-                import os
-                app.sidebar.update_status(f"Loaded: {os.path.basename(summary.get('dump_file', ''))}", "ready")
-            
-            # Transition to landing dashboard overview
+                if summary.get("dump_file"):
+                    app.sidebar.update_status(f"Loaded: {os.path.basename(summary.get('dump_file', ''))}", "ready")
+                else:
+                    app.sidebar.update_status("No analysis loaded", "info")
+
             app.show_page("dashboard")
-            
-            # Reload metrics
-            if "dashboard" in app.pages:
-                app.pages["dashboard"].refresh()
